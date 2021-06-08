@@ -144,6 +144,8 @@ class ResNet(BaseModel):
         self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
 
+        self.avgpool2d = torch.nn.AdaptiveAvgPool2d((1,1))
+
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
         layers = []
@@ -170,7 +172,8 @@ class ResNet(BaseModel):
         out = self.layer4(out)
         out_list.append(out)
 
-        out = F.avg_pool2d(out, 4)
+        # out = F.avg_pool2d(out, 4)
+        out = self.avgpool2d(out)
         out = out.view(out.size(0), -1)
 
         if all_features:

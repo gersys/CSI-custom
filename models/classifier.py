@@ -59,6 +59,8 @@ def get_shift_classifer(model, K_shift):
 
 
 def get_classifier(mode, n_classes=10):
+   
+
     if mode == 'resnet18':
         classifier = ResNet18(num_classes=n_classes)
     elif mode == 'resnet34':

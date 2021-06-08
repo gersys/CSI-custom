@@ -39,6 +39,9 @@ def eval_ood_detection(P, model, id_loader, ood_loaders, ood_scores, train_loade
     }
 
     print('Pre-compute global statistics...')
+
+
+
     feats_train = get_features(P, f'{P.dataset}_train', model, train_loader, prefix=prefix, **kwargs)  # (M, T, d)
 
     P.axis = []
@@ -170,6 +173,8 @@ def _get_features(P, model, loader, interp=False, imagenet=False, simclr_aug=Non
     model.eval()
     feats_all = {layer: [] for layer in layers}  # initialize: empty list
     for i, (x, _) in enumerate(loader):
+
+
         if interp:
             x_interp = (x + last) / 2 if i > 0 else x  # omit the first batch, assume batch sizes are equal
             last = x  # save the last batch

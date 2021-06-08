@@ -46,6 +46,7 @@ def test_classifier(P, model, loader, steps, marginal=False, logger=None):
     mode = model.training
     model.eval()
 
+
     for n, (images, labels) in enumerate(loader):
         batch_size = images.size(0)
 

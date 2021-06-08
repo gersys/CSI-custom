@@ -13,6 +13,7 @@ IMAGENET_PATH = '~/data/ImageNet'
 
 CIFAR10_SUPERCLASS = list(range(10))  # one class
 IMAGENET_SUPERCLASS = list(range(30))  # one class
+CUSTOM_SUPERCLASS = list(range(1))
 
 CIFAR100_SUPERCLASS = [
     [4, 31, 55, 72, 95],
@@ -70,19 +71,23 @@ def get_transform(image_size=None):
     # Hence, we only define the identity transformation here
     if image_size:  # use pre-specified image size
         train_transform = transforms.Compose([
-            transforms.Resize((image_size[0], image_size[1])),
+            transforms.Resize((32, 32)),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
         ])
         test_transform = transforms.Compose([
-            transforms.Resize((image_size[0], image_size[1])),
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
         ])
     else:  # use default image size
         train_transform = transforms.Compose([
+            transforms.Resize((64, 64)),
             transforms.ToTensor(),
         ])
-        test_transform = transforms.ToTensor()
+        test_transform = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+        ])
 
     return train_transform, test_transform
 
@@ -138,6 +143,16 @@ def get_dataset(P, dataset, test_only=False, image_size=None, download=True, eva
         n_classes = 10
         train_set = datasets.CIFAR10(DATA_PATH, train=True, download=download, transform=train_transform)
         test_set = datasets.CIFAR10(DATA_PATH, train=False, download=download, transform=test_transform)
+
+    elif dataset == 'custom':
+        n_classes = 1
+        train_set = datasets.ImageFolder(root='datasets/custom/train',transform=train_transform)
+        test_set = datasets.ImageFolder(root='datasets/custom/ood', transform=test_transform)
+
+    elif dataset == 'custom-ood':
+        n_classes = 1
+        test_set = datasets.ImageFolder(root='datasets/custom/ood', transform=test_transform)
+
 
     elif dataset == 'cifar100':
         image_size = (32, 32, 3)
@@ -225,6 +240,8 @@ def get_dataset(P, dataset, test_only=False, image_size=None, download=True, eva
         test_set = datasets.ImageFolder(test_dir, transform=test_transform)
         test_set = get_subset_with_len(test_set, length=3000, shuffle=True)
 
+
+
     else:
         raise NotImplementedError()
 
@@ -241,6 +258,8 @@ def get_superclass_list(dataset):
         return CIFAR100_SUPERCLASS
     elif dataset == 'imagenet':
         return IMAGENET_SUPERCLASS
+    elif dataset == 'custom':
+        return CUSTOM_SUPERCLASS
     else:
         raise NotImplementedError()
 

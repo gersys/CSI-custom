@@ -15,6 +15,9 @@ logger = Logger(fname, ask=not resume, local_rank=P.local_rank)
 logger.log(P)
 logger.log(model)
 
+
+
+
 if P.multi_gpu:
     linear = model.module.linear
 else:

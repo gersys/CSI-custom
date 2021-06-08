@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class BaseModel(nn.Module, metaclass=ABCMeta):
-    def __init__(self, last_dim, num_classes=10, simclr_dim=128):
+    def __init__(self, last_dim=512, num_classes=10, simclr_dim=128):
         super(BaseModel, self).__init__()
         self.linear = nn.Linear(last_dim, num_classes)
         self.simclr_layer = nn.Sequential(
@@ -22,7 +22,9 @@ class BaseModel(nn.Module, metaclass=ABCMeta):
         _aux = {}
         _return_aux = False
 
+
         features = self.penultimate(inputs)
+
 
         output = self.linear(features)
 

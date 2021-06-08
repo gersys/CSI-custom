@@ -1,4 +1,5 @@
 from copy import deepcopy
+import os
 
 import torch
 import torch.nn as nn
@@ -8,17 +9,19 @@ from common.common import parse_args
 import models.classifier as C
 from datasets import get_dataset, get_superclass_list, get_subclass_dataset
 
+
+
 P = parse_args()
 
 ### Set torch device ###
 
-P.n_gpus = torch.cuda.device_count()
-assert P.n_gpus <= 1  # no multi GPU
+# P.n_gpus = torch.cuda.device_count()
+# assert P.n_gpus <= 1  # no multi GPU
 P.multi_gpu = False
 
 if torch.cuda.is_available():
     torch.cuda.set_device(P.local_rank)
-device = torch.device(f"cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ### Initialize dataset ###
 ood_eval = P.mode == 'ood_pre'
@@ -60,7 +63,7 @@ for ood in P.ood_dataset:
 
     if P.one_class_idx is not None:
         ood_test_set = get_subclass_dataset(full_test_set, classes=cls_list[ood])
-        ood = f'one_class_{ood}'  # change save name
+        ood = 'one_class_{ood}'  # change save name
     else:
         ood_test_set = get_dataset(P, dataset=ood, test_only=True, image_size=P.image_size, eval=ood_eval)
 
